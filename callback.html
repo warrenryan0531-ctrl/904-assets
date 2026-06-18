@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head><title>OAuth Callback</title></head>
+<body>
+<h2 id="status">Processing...</h2>
+<pre id="token" style="word-break:break-all;background:#f0f0f0;padding:12px;font-size:12px;"></pre>
+<script>
+  var hash = window.location.hash.substring(1);
+  var params = {};
+  hash.split('&').forEach(function(p) {
+    var kv = p.split('=');
+    params[kv[0]] = decodeURIComponent(kv[1] || '');
+  });
+  if (params.access_token) {
+    document.getElementById('status').textContent = 'Token captured!';
+    document.getElementById('token').textContent = 'ACCESS_TOKEN=' + params.access_token + '\n\nLength: ' + params.access_token.length;
+  } else {
+    document.getElementById('status').textContent = 'No token found in URL';
+    document.getElementById('token').textContent = 'Hash: ' + window.location.hash;
+  }
+</script>
+</body>
+</html>
