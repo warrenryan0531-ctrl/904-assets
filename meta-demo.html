@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>904 Digital Media — Meta API Demo</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f0f2f5; color: #1c1e21; }
+  header { background: #1877f2; color: white; padding: 16px 24px; display: flex; align-items: center; gap: 12px; }
+  header h1 { font-size: 18px; font-weight: 700; }
+  header span { font-size: 13px; opacity: 0.85; }
+  .tabs { display: flex; background: white; border-bottom: 2px solid #e4e6eb; padding: 0 24px; overflow-x: auto; }
+  .tab { padding: 14px 18px; font-size: 13px; font-weight: 600; cursor: pointer; border-bottom: 3px solid transparent; margin-bottom: -2px; white-space: nowrap; color: #65676b; }
+  .tab.active { color: #1877f2; border-bottom-color: #1877f2; }
+  .content { padding: 24px; max-width: 860px; margin: 0 auto; }
+  .card { background: white; border-radius: 8px; padding: 20px; margin-bottom: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.12); }
+  .card h2 { font-size: 15px; font-weight: 700; margin-bottom: 4px; color: #1c1e21; }
+  .card .desc { font-size: 13px; color: #65676b; margin-bottom: 16px; }
+  .api-call { background: #f7f8fa; border: 1px solid #dddfe2; border-radius: 6px; padding: 12px 16px; font-family: 'SF Mono', Monaco, monospace; font-size: 12px; margin-bottom: 12px; }
+  .method { color: #1877f2; font-weight: 700; }
+  .endpoint { color: #1c1e21; }
+  button.run { background: #1877f2; color: white; border: none; padding: 10px 20px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; }
+  button.run:hover { background: #166fe5; }
+  button.run:disabled { background: #bec3c9; cursor: not-allowed; }
+  .response { background: #1c1e21; color: #e4e6eb; border-radius: 6px; padding: 16px; font-family: 'SF Mono', Monaco, monospace; font-size: 12px; line-height: 1.6; white-space: pre-wrap; max-height: 300px; overflow-y: auto; margin-top: 12px; display: none; }
+  .response.show { display: block; }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; margin-left: 8px; }
+  .badge.ok { background: #e7f3e8; color: #1a7f37; }
+  .perm-tag { display: inline-block; background: #e7f0ff; color: #1877f2; padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; margin-bottom: 12px; }
+  .section-hidden { display: none; }
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <h1>904 Digital Media — API Permission Demo</h1>
+    <span>Graph API v25.0 · App ID: 2106887623375662</span>
+  </div>
+</header>
+<div class="tabs">
+  <div class="tab active" onclick="showTab(0)">pages_show_list</div>
+  <div class="tab" onclick="showTab(1)">pages_read_user_content</div>
+  <div class="tab" onclick="showTab(2)">pages_manage_posts</div>
+  <div class="tab" onclick="showTab(3)">pages_read_engagement</div>
+  <div class="tab" onclick="showTab(4)">pages_manage_engagement</div>
+  <div class="tab" onclick="showTab(5)">instagram_basic</div>
+  <div class="tab" onclick="showTab(6)">instagram_content_publish</div>
+  <div class="tab" onclick="showTab(7)">business_management</div>
+</div>
+<div class="content">
+  <div class="section" id="s0">
+    <div class="card">
+      <h2>pages_show_list <span class="badge ok">Permission Active</span></h2>
+      <div class="desc">Lists all Facebook Pages managed by the authorized user. 904 Digital Media uses this to discover which Pages a client has admin access to when they connect their account.</div>
+      <div class="perm-tag">pages_show_list</div>
+      <div class="api-call"><span class="method">GET</span> <span class="endpoint">graph.facebook.com/v25.0/me/accounts</span></div>
+      <button class="run" onclick="runCall(0)">Run API Call</button>
+      <div class="response" id="r0"></div>
+    </div>
+  </div>
+  <div class="section section-hidden" id="s1">
+    <div class="card">
+      <h2>pages_read_user_content <span class="badge ok">Permission Active</span></h2>
+      <div class="desc">Reads posts, comments, and ratings on a client's Facebook Page. Used to surface user-generated content for moderation and reporting dashboards.</div>
+      <div class="perm-tag">pages_read_user_content</div>
+      <div class="api-call"><span class="method">GET</span> <span class="endpoint">graph.facebook.com/v25.0/1175505708976931/feed?fields=id,message,created_time</span></div>
+      <button class="run" onclick="runCall(1)">Run API Call</button>
+      <div class="response" id="r1"></div>
+    </div>
+  </div>
+  <div class="section section-hidden" id="s2">
+    <div class="card">
+      <h2>pages_manage_posts <span class="badge ok">Permission Active</span></h2>
+      <div class="desc">Publishes posts to a client's Facebook Page on their behalf. This is the core posting capability of the 904 Digital Media content management workflow.</div>
+      <div class="perm-tag">pages_manage_posts</div>
+      <div class="api-call"><span class="method">GET</span> <span class="endpoint">graph.facebook.com/v25.0/1175505708976931/feed?fields=id,message,created_time,story</span></div>
+      <button class="run" onclick="runCall(2)">Verify Page Access</button>
+      <div class="response" id="r2"></div>
+    </div>
+  </div>
+  <div class="section section-hidden" id="s3">
+    <div class="card">
+      <h2>pages_read_engagement <span class="badge ok">Permission Active</span></h2>
+      <div class="desc">Retrieves engagement metrics and analytics insights for client Pages. Powers the reporting dashboard showing reach, impressions, and engagement over time.</div>
+      <div class="perm-tag">pages_read_engagement</div>
+      <div class="api-call"><span class="method">GET</span> <span class="endpoint">graph.facebook.com/v25.0/1175505708976931/insights?metric=page_impressions,page_engaged_users&period=day</span></div>
+      <button class="run" onclick="runCall(3)">Run API Call</button>
+      <div class="response" id="r3"></div>
+    </div>
+  </div>
+  <div class="section section-hidden" id="s4">
+    <div class="card">
+      <h2>pages_manage_engagement <span class="badge ok">Permission Active</span></h2>
+      <div class="desc">Allows replying to comments and moderating user engagement on client Pages. Used to respond to customer messages and comments on behalf of clients.</div>
+      <div class="perm-tag">pages_manage_engagement</div>
+      <div class="api-call"><span class="method">GET</span> <span class="endpoint">graph.facebook.com/v25.0/1175505708976931/feed?fields=id,message,comments{id,message,created_time}</span></div>
+      <button class="run" onclick="runCall(4)">Fetch Comments</button>
+      <div class="response" id="r4"></div>
+    </div>
+  </div>
+  <div class="section section-hidden" id="s5">
+    <div class="card">
+      <h2>instagram_basic <span class="badge ok">Permission Active</span></h2>
+      <div class="desc">Reads basic profile information for a client's Instagram Business Account. Used to verify account connection and populate the client dashboard.</div>
+      <div class="perm-tag">instagram_basic</div>
+      <div class="api-call"><span class="method">GET</span> <span class="endpoint">graph.facebook.com/v25.0/17841416495061870?fields=id,username,name,followers_count,media_count,biography</span></div>
+      <button class="run" onclick="runCall(5)">Run API Call</button>
+      <div class="response" id="r5"></div>
+    </div>
+  </div>
+  <div class="section section-hidden" id="s6">
+    <div class="card">
+      <h2>instagram_content_publish <span class="badge ok">Permission Active</span></h2>
+      <div class="desc">Publishes photos and videos to a client's Instagram Business Account. The primary posting permission for the Instagram content workflow.</div>
+      <div class="perm-tag">instagram_content_publish</div>
+      <div class="api-call"><span class="method">GET</span> <span class="endpoint">graph.facebook.com/v25.0/17841416495061870/media?fields=id,media_type,timestamp,caption</span></div>
+      <button class="run" onclick="runCall(6)">Verify IG Media Access</button>
+      <div class="response" id="r6"></div>
+    </div>
+  </div>
+  <div class="section section-hidden" id="s7">
+    <div class="card">
+      <h2>business_management <span class="badge ok">Permission Active</span></h2>
+      <div class="desc">Access to Meta Business portfolio information. Used by 904 Digital Media operating as a Tech Provider to manage multiple client Business accounts.</div>
+      <div class="perm-tag">business_management</div>
+      <div class="api-call"><span class="method">GET</span> <span class="endpoint">graph.facebook.com/v25.0/1175505708976931?fields=id,name,category,fan_count,verification_status</span></div>
+      <button class="run" onclick="runCall(7)">Run API Call</button>
+      <div class="response" id="r7"></div>
+    </div>
+  </div>
+</div>
+<script>
+const PAGE_TOKEN = 'EAAd8NABfey4BRlZBLZACU7or3XdvpHTtrb3vJvOn9zDFU0dvLmftmv8SPuZAK5ERZAZBgu315MeWrqogmK3hnQK6nhNfZAGnmPNu9jNUZAUHexARSqORRDPTDjqKMQgCOv6z6jXT9SXiVaHPJsVuwVZBJByZBoJF2GcxMUZByUltJCnUGHGP4MhfN0BnmWMcYnfuPyxwEPqKNP';
+const PAGE_ID = '1175505708976931';
+const IG_ID = '17841416495061870';
+const BASE = 'https://graph.facebook.com/v25.0';
+const calls = [
+  `${BASE}/me?fields=id,name,category,fan_count&access_token=${PAGE_TOKEN}`,
+  `${BASE}/${PAGE_ID}/feed?fields=id,message,created_time&limit=3&access_token=${PAGE_TOKEN}`,
+  `${BASE}/${PAGE_ID}/feed?fields=id,message,created_time,story&limit=3&access_token=${PAGE_TOKEN}`,
+  `${BASE}/${PAGE_ID}/insights?metric=page_impressions,page_engaged_users&period=day&access_token=${PAGE_TOKEN}`,
+  `${BASE}/${PAGE_ID}/feed?fields=id,message,comments{id,message,created_time}&limit=2&access_token=${PAGE_TOKEN}`,
+  `${BASE}/${IG_ID}?fields=id,username,name,followers_count,media_count,biography&access_token=${PAGE_TOKEN}`,
+  `${BASE}/${IG_ID}/media?fields=id,media_type,timestamp,caption&limit=3&access_token=${PAGE_TOKEN}`,
+  `${BASE}/${PAGE_ID}?fields=id,name,category,fan_count,verification_status&access_token=${PAGE_TOKEN}`,
+];
+async function runCall(idx) {
+  const btn = document.querySelector(`#s${idx} button.run`);
+  const resp = document.getElementById(`r${idx}`);
+  btn.disabled = true;
+  btn.textContent = 'Loading...';
+  resp.className = 'response show';
+  resp.innerHTML = '<span style="color:#ffd700">Calling Graph API...</span>';
+  try {
+    const res = await fetch(calls[idx]);
+    const data = await res.json();
+    resp.innerHTML = JSON.stringify(data, null, 2)
+      .replace(/"([^"]+)":/g, '<span style="color:#9cdcfe">"$1":</span>')
+      .replace(/: "([^"]+)"/g, ': <span style="color:#ce9178">"$1"</span>')
+      .replace(/: (\d+)/g, ': <span style="color:#b5cea8">$1</span>')
+      .replace(/: (true|false)/g, ': <span style="color:#569cd6">$1</span>');
+    btn.textContent = 'Success';
+    btn.style.background = '#2ea043';
+  } catch(e) {
+    resp.innerHTML = `<span style="color:#f48771">Error: ${e.message}</span>`;
+    btn.textContent = 'Retry';
+    btn.disabled = false;
+  }
+}
+function showTab(idx) {
+  document.querySelectorAll('.tab').forEach((t,i) => t.className = 'tab' + (i===idx?' active':''));
+  document.querySelectorAll('.section').forEach((s,i) => s.className = 'section' + (i===idx?'':' section-hidden'));
+}
+</script>
+</body>
+</html>
