@@ -1,0 +1,31 @@
+name: Decode base64 assets
+# Text-only connectors can't push binaries. Push <name>.png.b64 (or .jpg.b64);
+# this decodes it to <name>.png, commits the binary, and removes the .b64.
+on:
+  push:
+    branches: [main]
+    paths: ['**/*.b64']
+permissions:
+  contents: write
+jobs:
+  decode:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Decode
+        run: |
+          set -e
+          found=0
+          while IFS= read -r f; do
+            out="${f%.b64}"
+            tr -d ' \n\r\t' < "$f" | base64 -d > "$out"
+            rm "$f"
+            echo "decoded $f -> $out ($(stat -c%s "$out") bytes)"
+            found=1
+          done < <(find . -path ./.git -prune -o -name '*.b64' -print)
+          [ "$found" = 1 ] || exit 0
+          git config user.name "904-assets-bot"
+          git config user.email "actions@github.com"
+          git add -A
+          git commit -m "Decode base64 assets"
+          git push
